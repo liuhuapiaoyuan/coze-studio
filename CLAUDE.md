@@ -194,3 +194,7 @@ For custom plugin development:
 - Run linting with `rush lint-staged` (pre-commit hook)
 - Ensure tests pass before submitting PRs
 - Follow team-based package organization and tagging conventions
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

@@ -1,0 +1,417 @@
+# Coze Studio 插件 OpenAPI 模板
+# 复制此模板并根据你的需求修改
+
+info:
+  description: |
+    插件功能的详细描述。
+    支持多行文本，可以包含：
+    - 主要功能说明
+    - 使用场景介绍
+    - 特殊注意事项
+  title: 插件名称
+  version: v1.0.0
+openapi: 3.0.1
+
+paths:
+  /your-endpoint:
+    # HTTP 方法: get, post, put, delete, patch
+    post:
+      # 操作标识符，必须唯一
+      operationId: your_unique_operation_id
+      
+      # 请求参数定义
+      parameters:
+        # 查询参数示例
+        - description: 查询参数描述
+          in: query
+          name: query_param
+          required: false  # true 为必需参数
+          schema:
+            type: string
+            default: "默认值"
+            example: "示例值"
+        
+        # 路径参数示例
+        - description: 路径参数描述
+          in: path
+          name: path_param
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+
+      # 请求体定义 (适用于 POST, PUT, PATCH)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                # 字符串参数
+                text_input:
+                  description: 文本输入参数
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  example: "示例文本"
+                
+                # 数值参数
+                number_input:
+                  description: 数值输入参数
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  example: 50
+                
+                # 布尔参数
+                boolean_input:
+                  description: 布尔输入参数
+                  type: boolean
+                  default: true
+                
+                # 数组参数
+                array_input:
+                  description: 数组输入参数
+                  type: array
+                  items:
+                    type: string
+                  example: ["item1", "item2", "item3"]
+                
+                # 对象参数
+                object_input:
+                  description: 对象输入参数
+                  type: object
+                  properties:
+                    nested_field:
+                      type: string
+                      description: 嵌套字段
+                  example: {"nested_field": "value"}
+                
+                # 文件 URL 参数
+                file_url:
+                  description: 文件链接
+                  type: string
+                  format: uri
+                  example: "https://example.com/file.pdf"
+                
+                # 枚举参数
+                format_type:
+                  description: 格式类型
+                  type: string
+                  enum: ["json", "xml", "csv"]
+                  default: "json"
+              
+              # 必需参数列表
+              required:
+                - text_input
+                - number_input
+              
+              type: object
+        
+        description: 请求体说明
+        required: true
+
+      # 响应定义
+      responses:
+        # 成功响应 (HTTP 200)
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  # 成功标识
+                  success:
+                    description: 操作是否成功
+                    type: boolean
+                    example: true
+                  
+                  # 主要数据
+                  data:
+                    description: 返回的主要数据
+                    type: object
+                    properties:
+                      result:
+                        description: 处理结果
+                        type: string
+                        example: "处理完成"
+                      
+                      items:
+                        description: 结果列表
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            value:
+                              type: string
+                        example:
+                          - {"id": 1, "name": "item1", "value": "value1"}
+                          - {"id": 2, "name": "item2", "value": "value2"}
+                  
+                  # 元数据信息
+                  metadata:
+                    description: 元数据信息
+                    type: object
+                    properties:
+                      total_count:
+                        description: 总数量
+                        type: integer
+                      processing_time:
+                        description: 处理时间（毫秒）
+                        type: integer
+                      timestamp:
+                        description: 时间戳
+                        type: string
+                        format: date-time
+                    example:
+                      total_count: 2
+                      processing_time: 150
+                      timestamp: "2024-01-01T12:00:00Z"
+                  
+                  # 错误信息（成功时为空）
+                  error:
+                    description: 错误信息
+                    type: string
+                    example: null
+                
+                type: object
+          description: 操作成功响应
+        
+        # 客户端错误响应 (HTTP 400)
+        "400":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "请求参数格式错误"
+                  details:
+                    description: 详细错误信息
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        description: 错误字段名
+                      message:
+                        type: string
+                        description: 具体错误信息
+                    example:
+                      field: "text_input"
+                      message: "该字段不能为空"
+                type: object
+          description: 请求参数错误
+        
+        # 认证错误响应 (HTTP 401)
+        "401":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "认证失败或令牌已过期"
+                type: object
+          description: 认证失败
+        
+        # 权限错误响应 (HTTP 403)
+        "403":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "权限不足，无法访问该资源"
+                type: object
+          description: 权限不足
+        
+        # 资源不存在响应 (HTTP 404)
+        "404":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "请求的资源不存在"
+                type: object
+          description: 资源不存在
+        
+        # 请求过于频繁响应 (HTTP 429)
+        "429":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "请求过于频繁，请稍后重试"
+                  retry_after:
+                    description: 重试间隔（秒）
+                    type: integer
+                    example: 60
+                type: object
+          description: 请求限流
+        
+        # 服务器错误响应 (HTTP 500)
+        "500":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "服务器内部错误，请稍后重试"
+                type: object
+          description: 服务器内部错误
+        
+        # 默认错误响应
+        default:
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                  error_code:
+                    description: 错误代码
+                    type: string
+                type: object
+          description: 其他错误
+
+      # 接口摘要和详细描述
+      summary: 简短的功能描述（一句话）
+      description: |
+        详细的功能描述，可以包含：
+        
+        **主要功能：**
+        - 功能点1
+        - 功能点2
+        - 功能点3
+        
+        **使用场景：**
+        - 场景1
+        - 场景2
+        
+        **注意事项：**
+        - 重要提醒1
+        - 重要提醒2
+        
+        **示例请求：**
+        ```json
+        {
+          "text_input": "示例文本",
+          "number_input": 42,
+          "boolean_input": true
+        }
+        ```
+        
+        **示例响应：**
+        ```json
+        {
+          "success": true,
+          "data": {
+            "result": "处理完成",
+            "items": [{"id": 1, "name": "item1", "value": "value1"}]
+          },
+          "metadata": {
+            "total_count": 1,
+            "processing_time": 100,
+            "timestamp": "2024-01-01T12:00:00Z"
+          }
+        }
+        ```
+
+      # 标签分类（可选）
+      tags:
+        - "数据处理"
+        - "文本分析"
+
+# 服务器配置
+servers:
+  - url: https://your-api-server.com
+    description: 生产环境服务器
+  - url: https://staging-api-server.com
+    description: 测试环境服务器
+  - url: http://localhost:8080
+    description: 本地开发服务器
+
+# 全局组件定义（可选）
+components:
+  # 可复用的数据模型
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+        error_code:
+          type: string
+    
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+  
+  # 可复用的响应
+  responses:
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  
+  # 可复用的参数
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      description: 返回结果数量限制
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+# 安全配置（如果需要认证）
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization

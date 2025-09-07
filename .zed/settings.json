@@ -1,14 +1,6 @@
 {
-	"mcpServers": {
-		"github": {
-			"type": "stdio",
-			"url": "https://api.githubcopilot.com/mcp/",
-			"headers": {
-				"Authorization": "Bearer ${GITHUB_PAT}"
-			}
-		},
+	"context_servers": {
 		"task-master-ai": {
-			"type": "stdio",
 			"command": "npx",
 			"args": [
 				"-y",

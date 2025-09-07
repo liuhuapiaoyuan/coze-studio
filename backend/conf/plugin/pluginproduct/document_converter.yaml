@@ -1,0 +1,143 @@
+info:
+  description: 文档转换器，支持将 PDF、Word 文档转换为 Markdown 格式。通过输入文档链接，调用转换服务，返回格式化的 Markdown 内容，便于 AI 处理和分析。
+  title: 文档转换器
+  version: v1
+openapi: 3.0.1
+paths:
+  /api/convert:
+    post:
+      operationId: convert_document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                fileUrl:
+                  description: 要转换的文档文件链接，支持 PDF、Word (.doc, .docx) 格式。文件需要可公开访问。
+                  type: string
+                  format: uri
+                  example: "https://example.com/document.pdf"
+                outputFormat:
+                  description: 输出格式，当前仅支持 markdown
+                  type: string
+                  enum: ["markdown"]
+                  default: "markdown"
+                preserveFormatting:
+                  description: 是否保留原文档格式信息（如标题层级、表格结构等）
+                  type: boolean
+                  default: true
+              required:
+                - fileUrl
+              type: object
+        description: 文档转换请求参数
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    description: 转换是否成功
+                    type: boolean
+                  markdown:
+                    description: 转换后的 Markdown 内容
+                    type: string
+                  metadata:
+                    description: 文档元数据信息
+                    type: object
+                    properties:
+                      originalFileName:
+                        description: 原文件名
+                        type: string
+                      fileSize:
+                        description: 文件大小（字节）
+                        type: integer
+                      pageCount:
+                        description: 页数（仅 PDF）
+                        type: integer
+                      wordCount:
+                        description: 字数统计
+                        type: integer
+                      convertedAt:
+                        description: 转换时间戳
+                        type: string
+                        format: date-time
+                  error:
+                    description: 错误信息（转换失败时）
+                    type: string
+                type: object
+          description: 转换成功响应
+        "400":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "无效的文件链接或不支持的文件格式"
+                type: object
+          description: 请求参数错误
+        "422":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "文件无法访问或下载失败"
+                type: object
+          description: 文件处理错误
+        "500":
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "服务器内部错误，请稍后重试"
+                type: object
+          description: 服务器内部错误
+        default:
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                type: object
+          description: 其他错误
+      summary: 将文档转换为 Markdown 格式
+      description: |
+        接收文档文件链接，调用转换服务将 PDF、Word 文档转换为 Markdown 格式。
+        
+        **支持的文件格式：**
+        - PDF (.pdf)
+        - Microsoft Word (.doc, .docx)
+        
+        **功能特性：**
+        - 保留文档结构和格式
+        - 自动识别标题层级
+        - 转换表格为 Markdown 表格格式
+        - 提取文档元数据信息
+        - 支持中英文文档
+        
+        **使用场景：**
+        - 文档内容分析和摘要
+        - 知识库内容整理
+        - 自动化文档处理流程
+        - AI 辅助内容编辑
+servers:
+  - url: https://pdf.ggss.club
+    description: 文档转换服务

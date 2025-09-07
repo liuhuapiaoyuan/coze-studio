@@ -1,20 +1,8 @@
 {
 	"mcpServers": {
-		"github": {
-			"type": "stdio",
-			"url": "https://api.githubcopilot.com/mcp/",
-			"headers": {
-				"Authorization": "Bearer ${GITHUB_PAT}"
-			}
-		},
 		"task-master-ai": {
-			"type": "stdio",
 			"command": "npx",
-			"args": [
-				"-y",
-				"--package=task-master-ai",
-				"task-master-ai"
-			],
+			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",

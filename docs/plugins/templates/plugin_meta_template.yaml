@@ -1,0 +1,134 @@
+# Coze Studio 插件元数据配置模板
+# 将此配置添加到 backend/conf/plugin/pluginproduct/plugin_meta.yaml 文件的开头
+
+- plugin_id: 999                              # 插件唯一标识符，必须全局唯一
+  product_id: 7999999999999999999             # 产品标识符，使用长整数
+  deprecated: false                           # 是否废弃该插件
+  version: v1.0.0                            # 插件版本号，建议使用语义化版本
+  openapi_doc_file: your_plugin.yaml        # OpenAPI 规范文件名
+  plugin_type: 1                            # 插件类型：1=云端插件，2=本地插件
+  
+  # 插件清单配置
+  manifest:
+    schema_version: v1                       # 清单版本，固定为 v1
+    name_for_model: your_plugin_name         # 内部标识名（英文，下划线分隔）
+    name_for_human: 你的插件显示名称           # 用户可见的插件名称
+    
+    # AI 模型使用的描述（详细）
+    description_for_model: |
+      详细描述插件的功能，供 AI 理解和使用。
+      包括：
+      - 主要功能和能力
+      - 适用场景
+      - 输入输出说明
+      - 特殊限制或注意事项
+    
+    # 用户看到的描述（简洁）
+    description_for_human: 简洁明了的功能描述，告诉用户这个插件能做什么。
+    
+    # 认证配置
+    auth:
+      # 认证类型选择其一：
+      
+      # 1. 无需认证
+      type: none
+      
+      # 2. API Token 认证
+      # type: service_http
+      # key: Authorization                    # 认证头名称
+      # sub_type: token/api_key              # 子类型
+      # payload: |                           # 认证配置 JSON
+      #   {
+      #     "key": "Authorization",
+      #     "service_token": "your-api-token",
+      #     "location": "Header"
+      #   }
+      
+      # 3. OAuth 2.0 认证
+      # type: oauth
+      # sub_type: authorization_code
+      # payload: |
+      #   {
+      #     "client_id": "your-client-id",
+      #     "client_secret": "your-client-secret",
+      #     "client_url": "https://auth.example.com/oauth/authorize",
+      #     "scope": "read write",
+      #     "authorization_url": "https://auth.example.com/oauth/token",
+      #     "authorization_content_type": "application/json"
+      #   }
+    
+    # 插件图标路径
+    logo_url: official_plugin_icon/plugin_your_plugin.png
+    
+    # API 类型配置
+    api:
+      type: openapi                          # 固定为 openapi
+    
+    # 通用参数配置
+    common_params:
+      body: []                               # 请求体通用参数（通常为空）
+      
+      # 请求头通用参数
+      header:
+        - name: User-Agent                   # 用户代理（建议保留）
+          value: Coze/1.0
+        - name: Content-Type                 # 内容类型（POST/PUT 请求建议添加）
+          value: application/json
+        # - name: Accept                     # 接受类型（可选）
+        #   value: application/json
+        # - name: Accept-Language            # 语言设置（可选）
+        #   value: zh-CN,en-US
+      
+      path: []                               # 路径通用参数（通常为空）
+      query: []                              # 查询通用参数（通常为空）
+  
+  # 工具列表配置
+  tools:
+    - tool_id: 99001                         # 工具唯一标识符，必须全局唯一
+      deprecated: false                      # 是否废弃该工具
+      method: post                           # HTTP 方法：get, post, put, delete, patch
+      sub_url: /your-endpoint                # API 端点路径
+    
+    # 如果有多个工具，继续添加
+    # - tool_id: 99002
+    #   deprecated: false
+    #   method: get
+    #   sub_url: /another-endpoint
+
+# 如果需要添加更多插件，继续在下面添加
+# - plugin_id: 1000
+#   product_id: 8000000000000000000
+#   # ... 其他配置
+
+# 配置说明和最佳实践：
+#
+# 1. ID 分配建议：
+#    - plugin_id: 使用 900+ 的数字避免与系统插件冲突
+#    - tool_id: 使用 90000+ 的数字，每个插件预留 100 个 ID
+#    - product_id: 使用较大的长整数确保唯一性
+#
+# 2. 版本管理：
+#    - 使用语义化版本控制 (SemVer): major.minor.patch
+#    - 主版本号：不兼容的 API 修改
+#    - 次版本号：向下兼容的功能新增
+#    - 修订号：向下兼容的问题修正
+#
+# 3. 认证配置：
+#    - 优先选择无认证方式简化用户使用
+#    - 如需认证，提供清晰的获取密钥说明
+#    - OAuth 适用于需要用户授权的场景
+#
+# 4. 图标文件：
+#    - 使用 PNG 格式，建议尺寸 64x64 或 128x128 像素
+#    - 文件名格式：plugin_[插件名称].png
+#    - 放置在 official_plugin_icon/ 目录下
+#
+# 5. 通用参数：
+#    - User-Agent: 建议保留，有助于服务端识别来源
+#    - Content-Type: POST/PUT 请求建议设置
+#    - 避免设置可能冲突的认证相关头部
+#
+# 6. 工具配置：
+#    - 一个插件可包含多个工具（API 端点）
+#    - 每个工具对应 OpenAPI 规范中的一个 path
+#    - sub_url 必须与 OpenAPI 文件中的路径完全匹配
